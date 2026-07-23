@@ -14,13 +14,13 @@
 A **real-time, WASM-powered Single Page Application (SPA)** that applies **Nonlinear Reverb** to live microphone input. This project leverages the **Web Audio API** and **WebAssembly (WASM)** to deliver **high-performance, low-latency audio processing** directly in the browser.
 
 **Key Features:**
-✅ **Real-time audio processing** with live mic input.
-✅ **Nonlinear Reverb** with **harmonic distortion**, **modulation**, and **feedback delay networks (FDN)**.
-✅ **WASM-ready** for high-performance audio algorithms (Rust/C++ backend).
-✅ **Customizable parameters** (decay, diffusion, modulation, tone, feedback, nonlinearity).
-✅ **Presets** for quick experimentation (Shimmer, Chaotic, Infinite, Subtle, Dronescape).
-✅ **Bypass toggle** for A/B testing.
-✅ **Responsive UI** with intuitive controls.
+- ✅ **Real-time audio processing** with live mic input.
+- ✅ **Nonlinear Reverb** with **harmonic distortion**, **modulation**, and **feedback delay networks (FDN)**.
+- ✅ **WASM-ready** for high-performance audio algorithms (Rust/C++ backend).
+- ✅ **Customizable parameters** (decay, diffusion, modulation, tone, feedback, nonlinearity).
+- ✅ **Presets** for quick experimentation (Shimmer, Chaotic, Infinite, Subtle, Dronescape).
+- ✅ **Bypass toggle** for A/B testing.
+- ✅ **Responsive UI** with intuitive controls.
 
 **Impact on Sound:**
 > Adds **harmonics + reverb modulation**, creating **shimmering, infinite, or chaotic textures** (inspired by **Valhalla Shimmer**).

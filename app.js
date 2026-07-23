@@ -27,6 +27,36 @@ function makeDistortionCurve(amount) {
   return curve;
 }
 
+// Force audio to main speaker (mobile workaround)
+async function forceMainSpeaker(context) {
+  // Try setSinkId (Chrome 74+)
+  if (context.setSinkId) {
+    try {
+      await context.setSinkId('default');
+      console.log("Audio routed to default speaker (setSinkId).");
+      return true;
+    } catch (e) {
+      console.warn("setSinkId failed:", e);
+    }
+  }
+
+  // Fallback for iOS/Safari: Use a hidden audio element
+  if (/iPad|iPhone|iPod|Android/.test(navigator.userAgent)) {
+    const audioElement = new Audio();
+    audioElement.src = URL.createObjectURL(new Blob([new Uint8Array(1)], { type: 'audio/wav' }));
+    audioElement.volume = 0.01; // Almost silent
+    audioElement.play().catch(e => console.warn("Audio element play failed:", e));
+    setTimeout(() => {
+      audioElement.pause();
+      audioElement.src = '';
+    }, 500);
+    console.log("Forced speaker mode via audio element.");
+    return true;
+  }
+
+  return false;
+}
+
 // Create custom nonlinear reverb node
 function createNonlinearReverbNode(context) {
   // Create nodes
@@ -166,6 +196,7 @@ function createNonlinearReverbNode(context) {
 document.addEventListener('click', async () => {
   if (!audioContext) {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    await forceMainSpeaker(audioContext); // Force main speaker
     await setupAudio();
   }
 }, { once: true });
@@ -174,7 +205,15 @@ document.addEventListener('click', async () => {
 async function setupAudio() {
   try {
     // Request mic access
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        deviceId: null, // Use default mic
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+        channelCount: 1
+      }
+    });
     micSource = audioContext.createMediaStreamSource(micStream);
 
     // Create reverb node (returns an AudioNode)
@@ -190,7 +229,7 @@ async function setupAudio() {
     bypassNode.gain.value = 1;
 
     // Update status
-    document.getElementById('status').textContent = 'Mic enabled. Adjust parameters or select a preset.';
+    document.getElementById('status').textContent = 'Mic enabled. Audio routed to main speaker.';
     isProcessing = true;
 
     // Setup sliders
